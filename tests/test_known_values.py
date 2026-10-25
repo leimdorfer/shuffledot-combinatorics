@@ -12,6 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import shuffledot as sd  # noqa: E402
+import estimate_games as eg  # noqa: E402
 
 HAVE_CXX = bool(shutil.which("g++") or shutil.which("clang++"))
 if HAVE_CXX:
@@ -98,6 +99,32 @@ class FastCounter(unittest.TestCase):
         self.assertEqual(r["games_rotations"], 106_447_357_440)
         self.assertEqual(r["layouts_mirrors"], 781_937_280)
         self.assertEqual(r["layouts_rotations"], 1_563_851_520)
+
+
+class FullBoxEstimator(unittest.TestCase):
+    """estimate_games.py is a random-walk estimate, so these use a fixed seed and loose tolerances."""
+
+    def test_tile_counts(self):
+        self.assertEqual(eg.tile_counts(4), (10, 4))
+        self.assertEqual(eg.tile_counts(3), (6, 4))
+
+    def test_matches_exact_growth_counts(self):
+        import math
+        for (length, k), exact in {(2, 3): 344, (3, 3): 768, (3, 4): 30_240, (3, 6): 73_921_776}.items():
+            log_g, _, _ = eg.estimate_g(length, k, 5_000, seed=5)
+            self.assertAlmostEqual(10 ** (log_g - math.log10(exact)), 1.0, delta=0.05, msg=(length, k))
+
+    def test_six_tile_games_close_to_exact(self):
+        r = eg.games_estimate(3, 1, 5_000, seed=5)
+        self.assertAlmostEqual(10 ** r["log10_games"] / 53_224_047_360, 1.0, delta=0.05)
+        self.assertEqual(r["orders"], 720)
+        r = eg.games_estimate(3, 1, 5_000, seed=5, rotations_only=True)
+        self.assertAlmostEqual(10 ** r["log10_games"] / 106_447_357_440, 1.0, delta=0.05)
+
+    def test_full_box_bookkeeping(self):
+        # the order count is exact (only the placement part is estimated)
+        self.assertEqual(eg.games_estimate(4, 2, 200, seed=1)["orders"], 2_375_880_867_360_000)
+        self.assertEqual(eg.games_estimate(4, 2, 200, seed=1)["orientations"], 4096)
 
 
 if __name__ == "__main__":
