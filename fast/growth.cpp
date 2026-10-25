@@ -13,7 +13,11 @@
 //
 // Build:  g++ -O2 -o growth growth.cpp
 // Run:    ./growth L K          prints lines "G <n>", "S0 <mask> <count>", "S1 ...", "F <n>"
-#include <bits/stdc++.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <map>
+#include <vector>
 using namespace std;
 
 static const int N = 128, OFF = 56;          // grid size and where the first bar sits
