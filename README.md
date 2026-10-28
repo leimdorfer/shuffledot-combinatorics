@@ -1,6 +1,6 @@
 # Shuffledot combinatorics
 
-Code behind the "Shuffledot geekery" article: how many layouts, and how many different games, can you make from a Shuffledot-style tile set as the tiles get longer?
+Code behind the "Shuffledot by numbers" article: how many layouts, and how many different games, can you make from a Shuffledot-style tile set as the tiles get longer?
 
 [Shuffledot](https://shuffledot.com) is a physical tile game. Each tile is a row of black and white dots. This repo counts what happens with 1-dot, 2-dot and 3-dot tiles exactly, and estimates the full box of twenty 4-dot tiles.
 
